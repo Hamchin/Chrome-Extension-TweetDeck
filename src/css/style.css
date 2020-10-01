@@ -1,0 +1,40 @@
+.js-column-message {
+    display: none !important;
+}
+
+.app-columns .column-type-icon {
+    cursor: pointer !important;
+}
+
+.done .activity-header .icon-heart-filled {
+    color: #9DCCE0 !important;
+}
+
+.filter-enabled .column-type-icon {
+    color: #1DA1F2 !important;
+}
+
+.mdl .hidden .item-box {
+    opacity: 0.25 !important;
+}
+
+.mdl .hidden .tweet-context {
+    display: none !important;
+}
+
+.mdl .hidden .tweet-body {
+    display: none !important;
+}
+
+.mdl .hidden .js-show-this-thread {
+    display: none !important;
+}
+
+.ext-column .column-type-icon {
+    color: #1DA1F2 !important;
+}
+
+.ext-column .chirp-container {
+    height: 100% !important;
+    overflow-y: scroll !important;
+}

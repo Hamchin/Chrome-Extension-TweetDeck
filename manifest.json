@@ -1,0 +1,27 @@
+{
+  "name": "My TweetDeck",
+  "version": "1.0.0",
+  "manifest_version": 2,
+  "description": "",
+  "icons": {
+    "16": "img/icon16.png",
+    "48": "img/icon48.png",
+    "128": "img/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://tweetdeck.twitter.com/*"
+      ],
+      "js": [
+        "src/lib/jquery.min.js",
+        "src/lib/config.js",
+        "src/js/component.js",
+        "src/js/content.js"
+      ],
+      "css": [
+        "src/css/style.css"
+      ]
+    }
+  ]
+}
