@@ -16,8 +16,11 @@
       "js": [
         "src/lib/jquery.min.js",
         "src/lib/config.js",
-        "src/js/component.js",
-        "src/js/content.js"
+        "src/js/notice.js",
+        "src/js/column.js",
+        "src/js/modal.js",
+        "src/js/item.js",
+        "src/js/customize.js"
       ],
       "css": [
         "src/css/style.css"
