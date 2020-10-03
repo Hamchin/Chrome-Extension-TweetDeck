@@ -6,13 +6,14 @@ const getLastPart = (link) => {
 
 // 通知を送信する
 const sendNotices = () => {
-    // 自身のユーザーネーム
-    const receiverName = $('.js-account-summary').find('[rel="user"]').data('user-name');
     // 通知カラム
     const columns = $('.app-columns').find('.icon-notifications').closest('.column');
     if ($(columns).length === 0) return;
+    const column = $(columns).first();
+    // 自分のユーザーネーム
+    const receiverName = $(column).find('.attribution').text().replace('@', '');
     // 通知アイテム
-    const items = $(columns).first().find('.stream-item');
+    const items = $(column).find('.stream-item');
     $(items).each((_, item) => {
         // 送信済みの場合 -> スキップ
         if ($(item).hasClass('done')) return;

@@ -64,6 +64,7 @@ const likeTweet = async (tweetId) => {
 
 // タイムラインをカスタマイズする
 const customizeTimeline = async (column) => {
+    $(column).addClass('load');
     const columnId = $(column).data('column');
     const listName = $(column).find('.column-heading').text();
     const userName = $(column).find('.attribution').text().replace('@', '');
@@ -78,11 +79,16 @@ const customizeTimeline = async (column) => {
         const tweetItem = getTweetItem(tweet);
         $(container).append(tweetItem);
     });
-    $(content).empty();
-    $(content).append(container);
-    const tweetIds = tweets.map(tweet => tweet.id_str);
-    const isIncluded = (tweetId) => tweetIds.includes(tweetId);
-    readTweetMap.set(columnId, readTweetIds.filter(isIncluded));
+    const columnHasLoad = $(column).hasClass('load');
+    const scrollIsTop = $(column).find('.chirp-container').scrollTop() === 0;
+    if (columnHasLoad && scrollIsTop) {
+        $(content).empty();
+        $(content).append(container);
+        const tweetIds = tweets.map(tweet => tweet.id_str);
+        const isIncluded = (tweetId) => tweetIds.includes(tweetId);
+        readTweetMap.set(columnId, readTweetIds.filter(isIncluded));
+    }
+    $(column).removeClass('load');
 };
 
 // クリックイベント: ツイートアイテム
@@ -94,6 +100,7 @@ $(document).on('click', '.ext-column .stream-item', async (e) => {
     if (targetIs('.media-image')) return;
     if (targetIs('.tweet-reply-item')) return;
     if (targetIs('.tweet-retweet-item')) return;
+    $(e.target).closest('.ext-column').removeClass('load');
     const tweetItem = $(e.target).closest('.stream-item');
     const tweetId = $(tweetItem).data('tweet-id');
     const tweet = await likeTweet(tweetId) || await getTweet(tweetId);
@@ -122,9 +129,5 @@ $(document).on('dblclick', '.app-columns .icon-list', (e) => {
 
 // 毎分カスタムタイムラインを更新する
 setInterval(() => {
-    $('.ext-column').each((_, column) => {
-        const container = $(column).find('.chirp-container');
-        if ($(container).scrollTop() > 0) return;
-        customizeTimeline(column);
-    });
+    $('.ext-column').each((_, column) => customizeTimeline(column));
 }, 1000 * 60);
