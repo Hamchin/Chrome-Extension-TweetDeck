@@ -2,8 +2,12 @@
     display: none !important;
 }
 
-.app-columns .column-type-icon {
+.column-type-icon {
     cursor: pointer !important;
+}
+
+.column-header-temp {
+    cursor: default !important;
 }
 
 .done .activity-header .icon-heart-filled {

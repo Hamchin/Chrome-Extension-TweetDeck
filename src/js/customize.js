@@ -1,5 +1,8 @@
+// 対象カラム
+let targetColumn = null;
+
 // 既読済みツイートの連想配列
-const readTweetMap = new Map();
+let readTweetMap = {};
 
 // リストのタイムラインを取得する
 const getListTweets = async (listName, userName) => {
@@ -70,7 +73,7 @@ const customizeTimeline = async (column) => {
     const userName = $(column).find('.attribution').text().replace('@', '');
     const content = $(column).find('.column-content');
     const container = $('<div>', { class: 'chirp-container scroll-styled-v' });
-    const readTweetIds = readTweetMap.has(columnId) ? readTweetMap.get(columnId) : [];
+    const readTweetIds = readTweetMap[columnId] || [];
     const tweets = await getListTweets(listName, userName);
     tweets.forEach((tweet) => {
         if (tweet.favorited) return;
@@ -86,7 +89,7 @@ const customizeTimeline = async (column) => {
         $(content).append(container);
         const tweetIds = tweets.map(tweet => tweet.id_str);
         const isIncluded = (tweetId) => tweetIds.includes(tweetId);
-        readTweetMap.set(columnId, readTweetIds.filter(isIncluded));
+        readTweetMap[columnId] = readTweetIds.filter(isIncluded);
     }
     $(column).removeClass('load');
 };
@@ -111,21 +114,34 @@ $(document).on('click', '.ext-column .stream-item', async (e) => {
 
 // クリックイベント: カラムアイコン
 $(document).on('click', '.ext-column .column-type-icon', (e) => {
-    const column = $(e.target).closest('.column');
+    const column = $(e.target).closest('.ext-column');
     const columnId = $(column).data('column');
     const getTweetId = (_, item) => String($(item).data('tweet-id'));
     const tweetIds = $(column).find('.stream-item').map(getTweetId).get();
-    const readTweetIds = readTweetMap.has(columnId) ? readTweetMap.get(columnId) : [];
-    readTweetMap.set(columnId, readTweetIds.concat(tweetIds));
+    const readTweetIds = readTweetMap[columnId] || [];
+    readTweetMap[columnId] = readTweetIds.concat(tweetIds);
     $(column).find('.chirp-container').empty();
+    $(column).removeClass('load');
 });
 
-// ダブルクリックイベント: リストアイコン
-$(document).on('dblclick', '.app-columns .icon-list', (e) => {
-    const column = $(e.target).closest('.column');
-    $(column).addClass('ext-column');
-    customizeTimeline(column);
+// メッセージイベント
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message !== 'CUSTOM_TIMELINE') return;
+    if (targetColumn === null) return alert('Customize Failed.');
+    $(targetColumn).addClass('ext-column');
+    customizeTimeline(targetColumn);
 });
+
+// コンテキストメニューイベント
+document.oncontextmenu = (e) => {
+    targetColumn = null;
+    const columns = $(e.target).closest('.app-columns');
+    if ($(columns).length === 0) return;
+    const column = $(e.target).closest('.column');
+    if ($(column).length === 0) return;
+    if ($(column).find('.icon-list').length === 0) return;
+    targetColumn = column.first();
+};
 
 // 毎分カスタムタイムラインを更新する
 setInterval(() => {

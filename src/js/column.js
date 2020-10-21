@@ -30,6 +30,16 @@ $(document).on('click', '.app-columns .column-type-icon', (e) => {
     clearColumnTweets(column);
 });
 
+// マウスオーバーイベント: カラムアイコン
+$(document).on('mouseenter', '.app-columns .column-type-icon', (e) => {
+    $(e.target).attr('title', 'Clear');
+});
+
+// マウスアウトイベント: カラムアイコン
+$(document).on('mouseleave', '.app-columns .column-type-icon', (e) => {
+    $(e.target).removeAttr('title');
+});
+
 // マウスダウンイベント: 設定ボタン
 $(document).on('mousedown', '.column-settings-link', (e) => {
     const column = $(e.target).closest('.column');

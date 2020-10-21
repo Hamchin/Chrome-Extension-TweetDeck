@@ -1,6 +1,6 @@
 # Chrome-Extension-TweetDeck
 
 - Store liked notifications to the database.
-- Click the column icon to clear tweets in the column.
-- Double-click the column header to filter tweets on the modal.
+- Click the column icon on the app column to clear tweets.
+- Click the column icon on the modal to filter tweets.
 - Double-click the list icon to generate the custom timeline.

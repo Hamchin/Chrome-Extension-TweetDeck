@@ -34,8 +34,18 @@ const toggleFilterModalTweets = (modal) => {
     }
 };
 
-// ダブルクリックイベント: ヘッダー
-$(document).on('dblclick', '.open-modal .column-header-temp', (e) => {
+// クリックイベント: カラムアイコン
+$(document).on('click', '.open-modal .column-type-icon', (e) => {
     const modal = $(e.target).closest('.open-modal');
     toggleFilterModalTweets(modal);
+});
+
+// マウスオーバーイベント: カラムアイコン
+$(document).on('mouseenter', '.open-modal .column-type-icon', (e) => {
+    $(e.target).attr('title', 'Filter');
+});
+
+// マウスアウトイベント: カラムアイコン
+$(document).on('mouseleave', '.open-modal .column-type-icon', (e) => {
+    $(e.target).removeAttr('title');
 });
