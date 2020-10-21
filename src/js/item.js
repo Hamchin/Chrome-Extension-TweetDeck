@@ -47,46 +47,72 @@ const getHeaderItem = (tweet) => {
 };
 
 // アイテム: 単体メディア
-const getMediaItem = (mediaLink) => {
-    const mediaStyle = `background-image: url(${mediaLink}?format=jpg&name=120x120)`;
+const getMediaItem = (media, quoted = false) => {
+    const variants = media.video_info ? media.video_info.variants : [];
+    const videos = variants.filter(variant => variant.content_type === 'video/mp4');
+    const mediaUrl = videos.length ? videos.reduce((a, b) => a.bitrate > b.bitrate ? a : b).url : media.media_url_https;
+    const marginClass = quoted ? 'margin-tm' : 'margin-vm';
+    const mediaStyle = `background-image: url(${media.media_url_https}?format=jpg&name=120x120)`;
+    const overlay = mediaUrl.includes('.mp4') ? (`
+        <div class="video-overlay icon-with-bg-round">
+            <i class="icon icon-bg-dot icon-twitter-blue-color"></i>
+            <i class="icon icon-play-video"></i>
+        </div>
+    `) : '';
     return (`
         <div class="media-preview position-rel">
-            <div class="media-preview-container position-rel width-p--100 margin-vm is-paused">
-                <a class="block med-link media-item media-size-small is-zoomable" href="${mediaLink}" rel="mediaPreview" target="_blank" style="${mediaStyle}"></a>
+            <div class="media-preview-container position-rel width-p--100 ${marginClass} is-paused">
+                <a class="block med-link media-item media-size-small is-zoomable" rel="mediaPreview" data-media-url="${mediaUrl}" style="${mediaStyle}">
+                    ${overlay}
+                </a>
             </div>
         </div>
     `);
 };
 
 // アイテム: 複数メディア
-const getMediaGridItem = (mediaLinks) => {
-    const getMediaStyle = (mediaLink) => `background-image: url(${mediaLink}?format=jpg&name=120x120)`;
-    const mediaImages = mediaLinks.map((mediaLink) => (`
+const getMediaGridItem = (mediaList, quoted = false) => {
+    const mediaUrls = mediaList.map(media => media.media_url_https);
+    const marginClass = quoted ? 'margin-tm' : 'margin-vm';
+    const getMediaStyle = (mediaUrl) => `background-image: url(${mediaUrl}?format=jpg&name=120x120)`;
+    const mediaImages = mediaUrls.map((mediaUrl) => (`
         <div class="media-image-container block position-rel">
-            <a class="pin-all media-image block" href="${mediaLink}" rel="mediaPreview" target="_blank" style="${getMediaStyle(mediaLink)}"></a>
+            <a class="pin-all media-image block" rel="mediaPreview" data-media-url="${mediaUrl}" style="${getMediaStyle(mediaUrl)}"></a>
         </div>
     `));
     return (`
-        <div class="media-preview media-grid-container media-size-medium margin-vm">
-            <div class="media-grid-${mediaLinks.length}">
+        <div class="media-preview media-grid-container media-size-medium ${marginClass}">
+            <div class="media-grid-${mediaUrls.length}">
                 ${mediaImages.join('\n')}
             </div>
         </div>
     `);
 };
 
+// アイテム: 引用ツイート
+const getQuotedItem = (tweet) => {
+    return (`
+        <div class="quoted-tweet nbfc br--14 padding-al margin-b--8 position-rel margin-tm is-actionable">
+            <header class="tweet-header">${getAccountItem(tweet.user)}</header>
+            ${getBodyItem(tweet, quoted = true)}
+        </div>
+    `);
+};
+
 // アイテム: メイン
-const getBodyItem = (tweet) => {
+const getBodyItem = (tweet, quoted = false) => {
+    const text = tweet.full_text.replace(/https:[^\s]+$/, '').trim();
     const mediaList = tweet.extended_entities ? tweet.extended_entities.media : [];
-    const mediaLinks = mediaList.map(media => media.media_url_https);
     const mediaItem = (
-        mediaLinks.length > 1 ? getMediaGridItem(mediaLinks) :
-        mediaLinks.length > 0 ? getMediaItem(mediaLinks[0]) : ''
+        mediaList.length > 1 ? getMediaGridItem(mediaList, quoted) :
+        mediaList.length > 0 ? getMediaItem(mediaList[0], quoted) : ''
     );
+    const quotedItem = tweet.quoted_status ? getQuotedItem(tweet.quoted_status) : '';
     return (`
         <div class="tweet-body">
-            <p class="tweet-text with-linebreaks">${tweet.full_text}</p>
+            <p class="tweet-text with-linebreaks">${text}</p>
             ${mediaItem}
+            ${quotedItem}
         </div>
     `);
 };
@@ -159,4 +185,15 @@ const getTweetItem = (tweet) => {
         </article>
     `);
     return tweetItem.replace(/\n\s+/g, '');
+};
+
+// アイテム: メディアモーダル
+const getMediaModal = (mediaUrl) => {
+    const media = mediaUrl.includes('.mp4') ? (`
+        <video class="ext-media" src="${mediaUrl}" controls>
+    `) : (`
+        <img class="ext-media" src="${mediaUrl}">
+    `);
+    const mediaModal = `<div class="ext-modal">${media}</div>`;
+    return mediaModal.replace(/\n\s+/g, '');
 };

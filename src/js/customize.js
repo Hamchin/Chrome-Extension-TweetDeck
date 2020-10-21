@@ -4,14 +4,31 @@ let targetColumn = null;
 // 既読済みツイートの連想配列
 let readTweetMap = {};
 
+// リストの一覧を取得する
+const getLists = async (userName) => {
+    const url = new URL(TWITTER_API_URL + '/lists/list');
+    const body = {
+        access_token: TWITTER_ACCESS_TOKEN,
+        access_secret: TWITTER_ACCESS_SECRET,
+        screen_name: userName
+    };
+    const request = {
+        method: 'POST',
+        body: JSON.stringify(body)
+    };
+    const lists = await fetch(url.toString(), request)
+        .then(response => response.ok ? response.json() : [])
+        .catch(_ => []);
+    return lists;
+};
+
 // リストのタイムラインを取得する
-const getListTweets = async (listName, userName) => {
+const getListTweets = async (listId) => {
     const url = new URL(TWITTER_API_URL + '/lists/statuses');
     const body = {
         access_token: TWITTER_ACCESS_TOKEN,
         access_secret: TWITTER_ACCESS_SECRET,
-        slug: listName,
-        owner_screen_name: userName,
+        list_id: listId,
         exclude_replies: true,
         exclude_retweets: true,
         trim_user: false,
@@ -69,12 +86,11 @@ const likeTweet = async (tweetId) => {
 const customizeTimeline = async (column) => {
     $(column).addClass('load');
     const columnId = $(column).data('column');
-    const listName = $(column).find('.column-heading').text();
-    const userName = $(column).find('.attribution').text().replace('@', '');
+    const listId = $(column).data('list-id');
     const content = $(column).find('.column-content');
     const container = $('<div>', { class: 'chirp-container scroll-styled-v' });
     const readTweetIds = readTweetMap[columnId] || [];
-    const tweets = await getListTweets(listName, userName);
+    const tweets = await getListTweets(listId);
     tweets.forEach((tweet) => {
         if (tweet.favorited) return;
         if (tweet.favorite_count === 0) return;
@@ -101,6 +117,7 @@ $(document).on('click', '.ext-column .stream-item', async (e) => {
     if (targetIs('.tweet-timestamp')) return;
     if (targetIs('.media-item')) return;
     if (targetIs('.media-image')) return;
+    if (targetIs('.quoted-tweet')) return;
     if (targetIs('.tweet-reply-item')) return;
     if (targetIs('.tweet-retweet-item')) return;
     $(e.target).closest('.ext-column').removeClass('load');
@@ -124,11 +141,32 @@ $(document).on('click', '.ext-column .column-type-icon', (e) => {
     $(column).removeClass('load');
 });
 
+// クリックイベント: メディアプレビュー
+$(document).on('click', '.ext-column [rel="mediaPreview"]', (e) => {
+    const mediaPreview = $(e.target).closest('[rel="mediaPreview"]');
+    const mediaUrl = $(mediaPreview).data('media-url');
+    const mediaModal = getMediaModal(mediaUrl);
+    $('body').append(mediaModal);
+});
+
+// クリックイベント: メディアモーダル
+$(document).on('click', '.ext-modal', (e) => {
+    if ($(e.target).hasClass('ext-modal') === false) return;
+    $('.ext-modal').remove();
+});
+
 // メッセージイベント
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     if (message !== 'CUSTOM_TIMELINE') return;
     if (targetColumn === null) return alert('Customize Failed.');
+    $(targetColumn).find('.chirp-container').empty();
     $(targetColumn).addClass('ext-column');
+    const listName = $(targetColumn).find('.column-heading').text();
+    const userName = $(targetColumn).find('.attribution').text().replace('@', '');
+    const lists = await getLists(userName);
+    const listData = lists.find(listData => listData.name === listName);
+    const listId = listData ? listData.id_str : '';
+    $(targetColumn).data('list-id', listId);
     customizeTimeline(targetColumn);
 });
 

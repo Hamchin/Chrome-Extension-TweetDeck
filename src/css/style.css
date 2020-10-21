@@ -42,3 +42,19 @@
     height: 100% !important;
     overflow-y: scroll !important;
 }
+
+.ext-modal {
+    position: fixed !important;
+    height: 100% !important;
+    width: 100% !important;
+    z-index: 1000 !important;
+    background-color: rgba(56, 68, 77, 0.9) !important;
+}
+
+.ext-media {
+    display: block !important;
+    max-height: 80vh !important;
+    max-width: 80vw !important;
+    margin: 10vh auto !important;
+    border-radius: 4px !important;
+}
