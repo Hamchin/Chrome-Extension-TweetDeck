@@ -190,7 +190,7 @@ const getTweetItem = (tweet) => {
 // アイテム: メディアモーダル
 const getMediaModal = (mediaUrl) => {
     const media = mediaUrl.includes('.mp4') ? (`
-        <video class="ext-media" src="${mediaUrl}" controls>
+        <video class="ext-media" src="${mediaUrl}" controls autoplay>
     `) : (`
         <img class="ext-media" src="${mediaUrl}">
     `);
