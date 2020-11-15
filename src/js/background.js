@@ -1,13 +1,10 @@
-// インストールイベント
-chrome.runtime.onInstalled.addListener(() => {
-    // コンテキストメニュー: カスタムタイムライン
-    chrome.contextMenus.create({
-        type: 'normal',
-        id: 'CUSTOM_TIMELINE',
-        title: 'タイムラインをカスタマイズする',
-        documentUrlPatterns: ['https://tweetdeck.twitter.com/*']
-    });
-});
+// コンテキストメニュー: カスタムタイムライン
+chrome.contextMenus.create({
+    type: 'normal',
+    id: 'CUSTOM_TIMELINE',
+    title: 'タイムラインをカスタマイズする',
+    documentUrlPatterns: ['https://tweetdeck.twitter.com/*']
+}, () => chrome.runtime.lastError);
 
 // クリックイベント: コンテキストメニュー
 chrome.contextMenus.onClicked.addListener((info, tab) => {
