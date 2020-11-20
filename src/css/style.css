@@ -18,19 +18,19 @@
     color: #1DA1F2 !important;
 }
 
-.mdl .hidden .item-box {
+.filter-enabled .hidden .item-box {
     opacity: 0.25 !important;
 }
 
-.mdl .hidden .tweet-context {
+.filter-enabled .hidden .tweet-context {
     display: none !important;
 }
 
-.mdl .hidden .tweet-body {
+.filter-enabled .hidden .tweet-body {
     display: none !important;
 }
 
-.mdl .hidden .js-show-this-thread {
+.filter-enabled .hidden .js-show-this-thread {
     display: none !important;
 }
 

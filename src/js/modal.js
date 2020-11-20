@@ -1,6 +1,6 @@
 // モーダルツイートをフィルタリングする
-const filterModalTweets = (target) => {
-    $(target).find('.stream-item').each((_, item) => {
+const filterModalTweets = (container) => {
+    $(container).find('.stream-item').each((_, item) => {
         // リツイートを非表示にする
         const isRetweet = $(item).find('.tweet-context').length > 0;
         if (isRetweet) $(item).addClass('hidden');
@@ -13,8 +13,8 @@ const filterModalTweets = (target) => {
 // モーダル用オブザーバー
 const modalObserver = new MutationObserver((mutations) => {
     const target = mutations[0].target;
-    if (!target.classList.contains('chirp-container')) return;
-    filterModalTweets(target);
+    const isContainer = target.classList.contains('chirp-container');
+    if (isContainer) filterModalTweets(target);
 });
 
 // モーダルツイートのフィルタリング設定を切り替える
