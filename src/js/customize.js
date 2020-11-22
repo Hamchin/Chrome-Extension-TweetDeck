@@ -1,6 +1,3 @@
-// 対象カラム
-let targetColumn = null;
-
 // 既読済みツイートの連想配列
 let readTweetMap = {};
 
@@ -155,33 +152,19 @@ $(document).on('click', '.ext-modal', (e) => {
     $('.ext-modal').remove();
 });
 
-// メッセージイベント
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-    if (message !== 'CUSTOM_TIMELINE') return;
-    if (targetColumn === null) return alert('Customize Failed.');
-    $(targetColumn).find('.chirp-container').empty();
-    $(targetColumn).addClass('ext-column');
-    const listName = $(targetColumn).find('.column-heading').text();
-    const userName = $(targetColumn).find('.attribution').text().replace('@', '');
+// クリックイベント: カスタマイズボタン
+$(document).on('click', '.customize-btn', async (e) => {
+    const column = $(e.target).closest('.column');
+    if ($(column).hasClass('ext-column')) return;
+    $(column).addClass('ext-column');
+    $(column).find('.column-options').remove();
+    $(column).find('.chirp-container').empty();
+    const listName = $(column).find('.column-heading').text();
+    const userName = $(column).find('.attribution').text().replace('@', '');
     const lists = await getLists(userName);
     const listData = lists.find(listData => listData.name === listName);
     const listId = listData ? listData.id_str : '';
-    $(targetColumn).data('list-id', listId);
-    customizeTimeline(targetColumn);
+    $(column).data('list-id', listId);
+    customizeTimeline(column);
+    setInterval(() => customizeTimeline(column), 1000 * 60);
 });
-
-// コンテキストメニューイベント
-document.oncontextmenu = (e) => {
-    targetColumn = null;
-    const columns = $(e.target).closest('.app-columns');
-    if ($(columns).length === 0) return;
-    const column = $(e.target).closest('.column');
-    if ($(column).length === 0) return;
-    if ($(column).find('.icon-list').length === 0) return;
-    targetColumn = column.first();
-};
-
-// 毎分カスタムタイムラインを更新する
-setInterval(() => {
-    $('.ext-column').each((_, column) => customizeTimeline(column));
-}, 1000 * 60);

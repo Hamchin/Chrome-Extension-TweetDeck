@@ -11,12 +11,6 @@
   "permissions": [
     "contextMenus"
   ],
-  "background": {
-    "scripts": [
-      "src/js/background.js"
-    ],
-    "persistent": false
-  },
   "content_scripts": [
     {
       "matches": [
@@ -25,8 +19,8 @@
       "js": [
         "src/lib/jquery.min.js",
         "src/lib/config.js",
-        "src/js/notice.js",
         "src/js/column.js",
+        "src/js/notice.js",
         "src/js/modal.js",
         "src/js/item.js",
         "src/js/customize.js"

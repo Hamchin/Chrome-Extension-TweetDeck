@@ -10,6 +10,10 @@
     cursor: default !important;
 }
 
+.send-notice-enabled .column-type-icon {
+    color: #1DA1F2 !important;
+}
+
 .done .activity-header .icon-heart-filled {
     color: #9DCCE0 !important;
 }
@@ -32,6 +36,10 @@
 
 .filter-enabled .hidden .js-show-this-thread {
     display: none !important;
+}
+
+.send-notice-btn, .customize-btn {
+    background-color: #eafdea !important;
 }
 
 .ext-column .column-type-icon {

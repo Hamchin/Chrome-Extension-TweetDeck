@@ -1,15 +1,11 @@
-// リンクの最終部分を抽出する
-const getLastPart = (link) => {
-    const parts = link.split('/');
-    return parts[parts.length - 1];
+// リンクの最終パスを抽出する
+const getLastPath = (link) => {
+    const paths = link.split('/');
+    return paths[paths.length - 1];
 };
 
 // 通知を送信する
-const sendNotices = () => {
-    // 通知カラム
-    const columns = $('.app-columns').find('.icon-notifications').closest('.column');
-    if ($(columns).length === 0) return;
-    const column = $(columns).first();
+const sendNotices = (column) => {
     // 自分のユーザーネーム
     const receiverName = $(column).find('.attribution').text().replace('@', '');
     // 通知アイテム
@@ -28,10 +24,10 @@ const sendNotices = () => {
         if (username !== '@' + receiverName) return;
         // 相手のユーザーネーム
         const userLink = $(item).find('.activity-header').find('.account-link').attr('href');
-        const senderName = getLastPart(userLink);
+        const senderName = getLastPath(userLink);
         // ツイートID
         const tweetLink = $(item).find('.tweet-header').find('.tweet-timestamp').find('a').attr('href');
-        const tweetId = getLastPart(tweetLink);
+        const tweetId = getLastPath(tweetLink);
         // タイムスタンプ
         const dataTime = $(item).find('.activity-header').find('.tweet-timestamp').data('time');
         const timestamp = Math.floor(dataTime / 1000);
@@ -51,5 +47,11 @@ const sendNotices = () => {
     });
 };
 
-// 毎分通知を送信する
-setInterval(sendNotices, 1000 * 60);
+// クリックイベント: 通知送信ボタン
+$(document).on('click', '.send-notice-btn', (e) => {
+    const column = $(e.target).closest('.column');
+    sendNotices(column);
+    if ($(column).hasClass('send-notice-enabled')) return;
+    $(column).addClass('send-notice-enabled');
+    setInterval(() => sendNotices(column), 1000 * 60);
+});
