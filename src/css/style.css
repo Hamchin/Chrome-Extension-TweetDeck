@@ -39,7 +39,7 @@
 }
 
 .send-notice-btn, .customize-btn {
-    background-color: #eafdea !important;
+    background: #EAFDEA !important;
 }
 
 .ext-column .column-type-icon {
@@ -51,18 +51,38 @@
     overflow-y: scroll !important;
 }
 
-.ext-modal {
-    position: fixed !important;
-    height: 100% !important;
-    width: 100% !important;
-    z-index: 1000 !important;
-    background-color: rgba(56, 68, 77, 0.9) !important;
+.ext-media {
+    vertical-align: middle;
+    max-height: 80vh;
+    max-width: 80vw;
+    border-radius: 8px;
 }
 
-.ext-media {
-    display: block !important;
-    max-height: 80vh !important;
-    max-width: 80vw !important;
-    margin: 10vh auto !important;
-    border-radius: 8px !important;
+.ext-setting-modal {
+    display: inline-block;
+    vertical-align: middle;
+    width: 400px;
+    padding: 20px 20px 15px 20px;
+    border-radius: 14px;
+    background: #FFFFFF;
+}
+
+.ext-setting-item {
+    display: flex;
+    text-align: left;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.ext-setting-item:last-child {
+    margin-bottom: 15px;
+}
+
+.ext-setting-item span {
+    flex-basis: 60%;
+    font-size: 14px;
+}
+
+.ext-setting-item select, .ext-setting-item input {
+    flex-basis: 40%;
 }

@@ -189,11 +189,60 @@ const getTweetItem = (tweet) => {
 
 // アイテム: メディアモーダル
 const getMediaModal = (mediaUrl) => {
-    const media = mediaUrl.includes('.mp4') ? (`
-        <video class="ext-media" src="${mediaUrl}" controls autoplay>
-    `) : (`
-        <img class="ext-media" src="${mediaUrl}">
+    const video = `<video class="ext-media" src="${mediaUrl}" controls autoplay>`;
+    const image = `<img class="ext-media" src="${mediaUrl}">`;
+    const media = mediaUrl.includes('.mp4') ? video : image;
+    const mediaModal = `<div class="ext-overlay ovl block">${media}</div>`;
+    return mediaModal;
+};
+
+// アイテム: 設定モーダル
+const getSettingModal = (columnId, timelineInfo) => {
+    const likedTweetsSetting = (`
+        <div class="ext-setting-item">
+            <span>Liked Tweets</span>
+            <select id="includeLikedTweets">
+                <option value="true" ${timelineInfo.includeLikedTweets ? 'selected' : ''}>include</option>
+                <option value="false" ${timelineInfo.includeLikedTweets ? '' : 'selected'}>exclude</option>
+            </select>
+        </div>
     `);
-    const mediaModal = `<div class="ext-modal">${media}</div>`;
-    return mediaModal.replace(/\n\s+/g, '');
+    const minLikedCountSetting = (`
+        <div class="ext-setting-item">
+            <span>Minimum Liked Count</span>
+            <input type="number" id="minLikedCount" min="0" value="${timelineInfo.minLikedCount}">
+        </div>
+    `);
+    const sortSetting = (`
+        <div class="ext-setting-item">
+            <span>Sort By</span>
+            <select id="sortBy">
+                <option value="DEFAULT" ${timelineInfo.sortBy === 'DEFAULT' ? 'selected' : ''}>Default</option>
+                <option value="LIKED_COUNT" ${timelineInfo.sortBy === 'LIKED_COUNT' ? 'selected' : ''}>Liked Count</option>
+            </select>
+        </div>
+    `);
+    const actionSetting = (`
+        <div class="ext-setting-item">
+            <span>Action when clicking on item</span>
+            <select id="clickAction">
+                <option value="NONE" ${timelineInfo.clickAction === 'NONE' ? 'selected' : ''}>None</option>
+                <option value="LIKE" ${timelineInfo.clickAction === 'LIKE' ? 'selected' : ''}>Like</option>
+            </select>
+        </div>
+    `);
+    const settingModal = (`
+        <div class="ext-overlay ovl block">
+            <div class="ext-setting-modal" data-column="${columnId}">
+                <div>
+                    ${likedTweetsSetting}
+                    ${minLikedCountSetting}
+                    ${sortSetting}
+                    ${actionSetting}
+                </div>
+                <button class="ext-setting-done Button--primary pull-right">Done</button>
+            </div>
+        </div>
+    `);
+    return settingModal.replace(/\n\s+/g, '');
 };

@@ -1,4 +1,4 @@
-// カラムツイートをクリアする
+// ツイートをクリアする
 const clearColumnTweets = (column) => {
     const settingLink = $(column).find('.column-settings-link');
     Promise.resolve()
@@ -24,7 +24,7 @@ const clearColumnTweets = (column) => {
     }));
 };
 
-// クリックイベント: カラムアイコン
+// クリックイベント: カラムアイコン -> ツイートをクリアする
 $(document).on('click', '.app-columns .column-type-icon', (e) => {
     const column = $(e.target).closest('.column');
     clearColumnTweets(column);
@@ -48,20 +48,20 @@ $(document).on('mouseup', '.column-settings-link', async (e) => {
         button = $('<button>', { class: btnClass, text: btnText });
         $(filter).after(button);
     };
-    // 通知カラムの場合
+    // 通知カラムの場合 -> 通知送信ボタンを追加する
     const isNoticeColumn = $(icon).hasClass('icon-notifications');
     if (isNoticeColumn) addButton('send-notice-btn', 'Send Notifications');
-    // リストカラムの場合
+    // リストカラムの場合 -> カスタマイズボタンを追加する
     const isListColumn = $(icon).hasClass('icon-list');
     if (isListColumn) addButton('customize-btn', 'Customize');
 });
 
-// マウスオーバーイベント: カラムアイコン
+// マウスオーバーイベント: カラムアイコン -> タイトルを追加する
 $(document).on('mouseenter', '.app-columns .column-type-icon', (e) => {
     $(e.target).attr('title', 'Clear');
 });
 
-// マウスアウトイベント: カラムアイコン
+// マウスアウトイベント: カラムアイコン -> タイトルを消去する
 $(document).on('mouseleave', '.app-columns .column-type-icon', (e) => {
     $(e.target).removeAttr('title');
 });

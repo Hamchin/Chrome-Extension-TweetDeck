@@ -47,7 +47,7 @@ const sendNotices = (column) => {
     });
 };
 
-// クリックイベント: 通知送信ボタン
+// クリックイベント: 通知送信ボタン -> 通知を送信する
 $(document).on('click', '.send-notice-btn', (e) => {
     const column = $(e.target).closest('.column');
     sendNotices(column);
