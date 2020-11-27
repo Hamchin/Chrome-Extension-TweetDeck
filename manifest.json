@@ -20,8 +20,8 @@
         "src/lib/jquery.min.js",
         "src/lib/config.js",
         "src/js/column.js",
-        "src/js/notice.js",
         "src/js/modal.js",
+        "src/js/notice.js",
         "src/js/item.js",
         "src/js/customize.js"
       ],

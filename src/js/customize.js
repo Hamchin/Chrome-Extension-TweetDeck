@@ -133,15 +133,6 @@ $(document).on('click', '.ext-column .stream-item', async (e) => {
     const columnId = $(column).data('column');
     const timelineInfo = customTimelineInfo[columnId];
     if (timelineInfo === undefined) return;
-    const targetIs = (selector) => $(e.target).closest(selector).length > 0;
-    if (targetIs('.account-link')) return;
-    if (targetIs('.tweet-timestamp')) return;
-    if (targetIs('.media-item')) return;
-    if (targetIs('.media-image')) return;
-    if (targetIs('.quoted-tweet')) return;
-    if (targetIs('.tweet-reply-item')) return;
-    if (targetIs('.tweet-retweet-item')) return;
-    if (targetIs('.tweet-favorite-item')) return;
     // ツイートをいいねする
     if (timelineInfo.clickAction === 'LIKE') {
         $(e.target).closest('.column').removeClass('load');
@@ -153,6 +144,9 @@ $(document).on('click', '.ext-column .stream-item', async (e) => {
         $(tweetItem).replaceWith(newTweetItem);
     }
 });
+
+// クリックイベント: アクションアイテム
+$(document).on('click', '.ext-column .action', (e) => e.stopPropagation());
 
 // クリックイベント: メディアプレビュー -> メディアモーダルを表示する
 $(document).on('click', '.ext-column [rel="mediaPreview"]', (e) => {

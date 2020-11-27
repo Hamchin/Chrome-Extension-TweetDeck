@@ -49,8 +49,13 @@ const sendNotices = (column) => {
 
 // クリックイベント: 通知送信ボタン -> 通知を送信する
 $(document).on('click', '.send-notice-btn', (e) => {
+    // 通知を送信する
     const column = $(e.target).closest('.column');
     sendNotices(column);
+    // 設定ボタンをクリックする
+    const settingLink = $(column).find('.column-settings-link');
+    $(settingLink).get(0).click();
+    // 定期的に通知を送信する
     if ($(column).hasClass('send-notice-enabled')) return;
     $(column).addClass('send-notice-enabled');
     setInterval(() => sendNotices(column), 1000 * 60);
