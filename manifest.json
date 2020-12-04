@@ -2,31 +2,27 @@
   "name": "My TweetDeck",
   "version": "1.0.0",
   "manifest_version": 2,
-  "description": "",
   "icons": {
-    "16": "img/icon16.png",
-    "48": "img/icon48.png",
-    "128": "img/icon128.png"
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
   },
-  "permissions": [
-    "contextMenus"
-  ],
   "content_scripts": [
     {
       "matches": [
         "https://tweetdeck.twitter.com/*"
       ],
       "js": [
-        "src/lib/jquery.min.js",
-        "src/lib/config.js",
-        "src/js/column.js",
-        "src/js/modal.js",
-        "src/js/notice.js",
-        "src/js/item.js",
-        "src/js/customize.js"
+        "vendor/jquery.min.js",
+        "config/config.js",
+        "scripts/column.js",
+        "scripts/modal.js",
+        "scripts/notice.js",
+        "scripts/item.js",
+        "scripts/customize.js"
       ],
       "css": [
-        "src/css/style.css"
+        "styles/style.css"
       ]
     }
   ]
