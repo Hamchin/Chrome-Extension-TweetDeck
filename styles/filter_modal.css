@@ -1,0 +1,27 @@
+.column-header-temp {
+    cursor: default !important;
+}
+
+.column-temp .column-type-icon {
+    cursor: pointer !important;
+}
+
+.filter-enabled .column-type-icon {
+    color: #1DA1F2 !important;
+}
+
+.filter-enabled .hidden .item-box {
+    opacity: 0.25 !important;
+}
+
+.filter-enabled .hidden .tweet-context {
+    display: none !important;
+}
+
+.filter-enabled .hidden .tweet-body {
+    display: none !important;
+}
+
+.filter-enabled .hidden .js-show-this-thread {
+    display: none !important;
+}

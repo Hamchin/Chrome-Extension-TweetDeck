@@ -1,0 +1,11 @@
+.column .js-column-message {
+    display: none !important;
+}
+
+.column .column-type-icon {
+    cursor: pointer !important;
+}
+
+.column-options.hidden {
+    display: none !important;
+}

@@ -1,44 +1,4 @@
-.js-column-message {
-    display: none !important;
-}
-
-.column-type-icon {
-    cursor: pointer !important;
-}
-
-.column-header-temp {
-    cursor: default !important;
-}
-
-.send-notice-enabled .column-type-icon {
-    color: #1DA1F2 !important;
-}
-
-.done .activity-header .icon-heart-filled {
-    color: #9DCCE0 !important;
-}
-
-.filter-enabled .column-type-icon {
-    color: #1DA1F2 !important;
-}
-
-.filter-enabled .hidden .item-box {
-    opacity: 0.25 !important;
-}
-
-.filter-enabled .hidden .tweet-context {
-    display: none !important;
-}
-
-.filter-enabled .hidden .tweet-body {
-    display: none !important;
-}
-
-.filter-enabled .hidden .js-show-this-thread {
-    display: none !important;
-}
-
-.send-notice-btn, .customize-btn {
+.customize-btn {
     background: #EAFDEA !important;
 }
 

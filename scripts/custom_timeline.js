@@ -222,3 +222,21 @@ $(document).on('click', '.customize-btn', async (e) => {
     customizeTimeline(column);
     setInterval(() => customizeTimeline(column), 1000 * 60);
 });
+
+// マウスアップイベント: 設定ボタン -> カスタマイズボタンを設置する
+$(document).on('mouseup', '.column-settings-link', async (e) => {
+    const column = $(e.target).closest('.column');
+    const icon = $(column).find('.column-type-icon');
+    // リストアイコン以外の場合 -> キャンセル
+    if ($(icon).hasClass('icon-list') === false) return;
+    // 検索フィルターが存在しない場合 -> キャンセル
+    await new Promise(resolve => setTimeout(resolve, 10));
+    const filter = $(column).find('.js-search-filter');
+    if ($(filter).length === 0) return;
+    // ボタンを追加する
+    if ($(filter).parent().find('.customize-btn').length > 0) return;
+    const btnClass = 'full-width Button--link customize-btn';
+    const btnText = 'Customize';
+    const button = $('<button>', { class: btnClass, text: btnText });
+    $(filter).after(button);
+});

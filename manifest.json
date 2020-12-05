@@ -15,14 +15,17 @@
       "js": [
         "vendor/jquery.min.js",
         "config/config.js",
-        "scripts/column.js",
-        "scripts/modal.js",
-        "scripts/notice.js",
-        "scripts/item.js",
-        "scripts/customize.js"
+        "scripts/component.js",
+        "scripts/clear_timeline.js",
+        "scripts/filter_modal.js",
+        "scripts/send_notice.js",
+        "scripts/custom_timeline.js"
       ],
       "css": [
-        "styles/style.css"
+        "styles/clear_timeline.css",
+        "styles/filter_modal.css",
+        "styles/send_notice.css",
+        "styles/custom_timeline.css"
       ]
     }
   ]
