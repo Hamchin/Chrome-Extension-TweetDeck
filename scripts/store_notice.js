@@ -5,7 +5,7 @@ const getLastPath = (link) => {
 };
 
 // 通知を送信する
-const sendNotices = (column) => {
+const storeNotices = (column) => {
     // 自分のユーザーネーム
     const receiverName = $(column).find('.attribution').text().replace('@', '');
     // 通知アイテム
@@ -48,17 +48,17 @@ const sendNotices = (column) => {
 };
 
 // クリックイベント: 通知送信ボタン -> 通知を送信する
-$(document).on('click', '.send-notice-btn', (e) => {
+$(document).on('click', '.store-notice-btn', (e) => {
     // 通知を送信する
     const column = $(e.target).closest('.column');
-    sendNotices(column);
+    storeNotices(column);
     // 設定ボタンをクリックする
     const settingLink = $(column).find('.column-settings-link');
     $(settingLink).get(0).click();
     // 定期的に通知を送信する
-    if ($(column).hasClass('send-notice-enabled')) return;
-    $(column).addClass('send-notice-enabled');
-    setInterval(() => sendNotices(column), 1000 * 60);
+    if ($(column).hasClass('store-notice-enabled')) return;
+    $(column).addClass('store-notice-enabled');
+    setInterval(() => storeNotices(column), 1000 * 60);
 });
 
 // マウスアップイベント: 設定ボタン -> 通知送信ボタンを設置する
@@ -72,9 +72,9 @@ $(document).on('mouseup', '.column-settings-link', async (e) => {
     const filter = $(column).find('.js-search-filter');
     if ($(filter).length === 0) return;
     // ボタンを追加する
-    if ($(filter).parent().find('.send-notice-btn').length > 0) return;
-    const btnClass = 'full-width Button--link send-notice-btn';
-    const btnText = 'Send Notifications';
+    if ($(filter).parent().find('.store-notice-btn').length > 0) return;
+    const btnClass = 'full-width Button--link store-notice-btn';
+    const btnText = 'Store Notifications';
     const button = $('<button>', { class: btnClass, text: btnText });
     $(filter).after(button);
 });
