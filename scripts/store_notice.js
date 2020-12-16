@@ -50,7 +50,7 @@ const storeNotices = (column) => {
 // クリックイベント: 通知送信ボタン -> 通知を送信する
 $(document).on('click', '.store-notice-btn', (e) => {
     // 通知を送信する
-    const column = $(e.target).closest('.column');
+    const column = $(e.currentTarget).closest('.column');
     storeNotices(column);
     // 設定ボタンをクリックする
     const settingLink = $(column).find('.column-settings-link');
@@ -63,7 +63,7 @@ $(document).on('click', '.store-notice-btn', (e) => {
 
 // マウスアップイベント: 設定ボタン -> 通知送信ボタンを設置する
 $(document).on('mouseup', '.column-settings-link', async (e) => {
-    const column = $(e.target).closest('.column');
+    const column = $(e.currentTarget).closest('.column');
     const icon = $(column).find('.column-type-icon');
     // 通知アイコン以外の場合 -> キャンセル
     if ($(icon).hasClass('icon-notifications') === false) return;

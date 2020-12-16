@@ -35,16 +35,16 @@ const toggleFilterModalTimeline = (modal) => {
 
 // クリックイベント: カラムアイコン -> フィルタリング設定を切り替える
 $(document).on('click', '.open-modal .column-type-icon', (e) => {
-    const modal = $(e.target).closest('.open-modal');
+    const modal = $(e.currentTarget).closest('.open-modal');
     toggleFilterModalTimeline(modal);
 });
 
 // マウスオーバーイベント: カラムアイコン -> タイトルを追加する
 $(document).on('mouseenter', '.open-modal .column-type-icon', (e) => {
-    $(e.target).attr('title', 'Filter');
+    $(e.currentTarget).attr('title', 'Filter');
 });
 
 // マウスアウトイベント: カラムアイコン -> タイトルを消去する
 $(document).on('mouseleave', '.open-modal .column-type-icon', (e) => {
-    $(e.target).removeAttr('title');
+    $(e.currentTarget).removeAttr('title');
 });

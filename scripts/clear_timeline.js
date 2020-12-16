@@ -26,22 +26,22 @@ const clearTimeline = (column) => {
 
 // クリックイベント: カラムアイコン -> タイムラインをクリアする
 $(document).on('click', '.app-columns .column-type-icon', (e) => {
-    const column = $(e.target).closest('.column');
+    const column = $(e.currentTarget).closest('.column');
     clearTimeline(column);
 });
 
 // マウスアップイベント: 設定ボタン -> オプションを表示する
 $(document).on('mouseup', '.column-settings-link', async (e) => {
-    const column = $(e.target).closest('.column');
+    const column = $(e.currentTarget).closest('.column');
     $(column).find('.column-options').removeClass('hidden');
 });
 
 // マウスオーバーイベント: カラムアイコン -> タイトルを追加する
 $(document).on('mouseenter', '.app-columns .column-type-icon', (e) => {
-    $(e.target).attr('title', 'Clear');
+    $(e.currentTarget).attr('title', 'Clear');
 });
 
 // マウスアウトイベント: カラムアイコン -> タイトルを消去する
 $(document).on('mouseleave', '.app-columns .column-type-icon', (e) => {
-    $(e.target).removeAttr('title');
+    $(e.currentTarget).removeAttr('title');
 });

@@ -15,7 +15,8 @@
       "js": [
         "vendor/jquery.min.js",
         "config/config.js",
-        "scripts/component.js",
+        "utils/twitter.js",
+        "utils/component.js",
         "scripts/clear_timeline.js",
         "scripts/filter_modal.js",
         "scripts/store_notice.js",

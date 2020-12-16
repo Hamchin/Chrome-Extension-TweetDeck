@@ -1,5 +1,8 @@
+// コンポーネント
+const component = {};
+
 // アイテム: アカウント
-const getAccountItem = (user) => {
+component.getAccountItem = function (user) {
     const accountLink = `https://twitter.com/${user.screen_name}`;
     return (`
         <a class="account-link link-complex block flex-auto action" href="${accountLink}" rel="user" target="_blank">
@@ -17,7 +20,7 @@ const getAccountItem = (user) => {
 };
 
 // アイテム: 経過時間
-const getTimeItem = (tweet) => {
+component.getTimeItem = function (tweet) {
     const tweetLink = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
     const timestamp = new Date(tweet.created_at).getTime();
     const timeDiff = Date.now() - timestamp;
@@ -37,17 +40,17 @@ const getTimeItem = (tweet) => {
 };
 
 // アイテム: ヘッダー
-const getHeaderItem = (tweet) => {
+component.getHeaderItem = function (tweet) {
     return (`
         <header class="tweet-header flex flex-row flex-align--baseline">
-            ${getAccountItem(tweet.user)}
-            ${getTimeItem(tweet)}
+            ${this.getAccountItem(tweet.user)}
+            ${this.getTimeItem(tweet)}
         </header>
     `);
 };
 
 // アイテム: 単体メディア
-const getMediaItem = (media, quoted = false) => {
+component.getMediaItem = function (media, quoted = false) {
     const variants = media.video_info ? media.video_info.variants : [];
     const videos = variants.filter(variant => variant.content_type === 'video/mp4');
     const mediaUrl = videos.length ? videos.reduce((a, b) => a.bitrate > b.bitrate ? a : b).url : media.media_url_https;
@@ -71,7 +74,7 @@ const getMediaItem = (media, quoted = false) => {
 };
 
 // アイテム: 複数メディア
-const getMediaGridItem = (mediaList, quoted = false) => {
+component.getMediaGridItem = function (mediaList, quoted = false) {
     const mediaUrls = mediaList.map(media => media.media_url_https);
     const marginClass = quoted ? 'margin-tm' : 'margin-vm';
     const getMediaStyle = (mediaUrl) => `background-image: url(${mediaUrl}?format=jpg&name=120x120)`;
@@ -90,24 +93,24 @@ const getMediaGridItem = (mediaList, quoted = false) => {
 };
 
 // アイテム: 引用ツイート
-const getQuotedItem = (tweet) => {
+component.getQuotedItem = function (tweet) {
     return (`
         <div class="quoted-tweet nbfc br--14 padding-al margin-b--8 position-rel margin-tm is-actionable action">
-            <header class="tweet-header">${getAccountItem(tweet.user)}</header>
-            ${getBodyItem(tweet, quoted = true)}
+            <header class="tweet-header">${this.getAccountItem(tweet.user)}</header>
+            ${this.getBodyItem(tweet, quoted = true)}
         </div>
     `);
 };
 
 // アイテム: メイン
-const getBodyItem = (tweet, quoted = false) => {
+component.getBodyItem = function (tweet, quoted = false) {
     const text = tweet.full_text.replace(/https:[^\s]+$/, '').trim();
     const mediaList = tweet.extended_entities ? tweet.extended_entities.media : [];
     const mediaItem = (
-        mediaList.length > 1 ? getMediaGridItem(mediaList, quoted) :
-        mediaList.length > 0 ? getMediaItem(mediaList[0], quoted) : ''
+        mediaList.length > 1 ? this.getMediaGridItem(mediaList, quoted) :
+        mediaList.length > 0 ? this.getMediaItem(mediaList[0], quoted) : ''
     );
-    const quotedItem = tweet.quoted_status ? getQuotedItem(tweet.quoted_status) : '';
+    const quotedItem = tweet.quoted_status ? this.getQuotedItem(tweet.quoted_status) : '';
     return (`
         <div class="tweet-body">
             <p class="tweet-text with-linebreaks">${text}</p>
@@ -118,7 +121,7 @@ const getBodyItem = (tweet, quoted = false) => {
 };
 
 // アイテム: リプライ
-const getReplyItem = () => {
+component.getReplyItem = function () {
     return (`
         <li class="tweet-reply-item pull-left margin-r--10 action">
             <a class="tweet-action position-rel">
@@ -129,10 +132,11 @@ const getReplyItem = () => {
 };
 
 // アイテム: リツイート
-const getRetweetItem = (tweet) => {
+component.getRetweetItem = function (tweet) {
+    const isRetweet = tweet.retweeted ? 'is-retweet' : '';
     const anim = tweet.retweeted ? 'anim anim-slower anim-bounce-in' : '';
     return (`
-        <li class="tweet-retweet-item pull-left margin-r--10 action">
+        <li class="tweet-retweet-item pull-left margin-r--10 action ${isRetweet}">
             <a class="tweet-action position-rel ${anim}">
                 <i class="icon icon-retweet icon-retweet-toggle txt-center pull-left"></i>
                 <span class="pull-right icon-retweet-toggle margin-l--3 margin-t--1 txt-size--12 retweet-count">${tweet.retweet_count}</span>
@@ -142,11 +146,12 @@ const getRetweetItem = (tweet) => {
 };
 
 // アイテム: いいね
-const getFavoriteItem = (tweet) => {
+component.getFavoriteItem = function (tweet) {
+    const isFavorite = tweet.favorited ? 'is-favorite' : '';
     const icon = tweet.favorited ? 'icon-heart-filled' : 'icon-favorite';
     const anim = tweet.favorited ? 'anim anim-slower anim-bounce-in' : '';
     return (`
-        <li class="tweet-favorite-item pull-left margin-r--10 action">
+        <li class="tweet-favorite-item pull-left margin-r--10 action ${isFavorite}">
             <a class="tweet-action position-rel ${anim}">
                 <i class="icon ${icon} icon-favorite-toggle txt-center pull-left"></i>
                 <span class="pull-right icon-favorite-toggle margin-l--2 margin-t--1 txt-size--12 like-count">${tweet.favorite_count}</span>
@@ -156,29 +161,27 @@ const getFavoriteItem = (tweet) => {
 };
 
 // アイテム: フッター
-const getFooterItem = (tweet) => {
+component.getFooterItem = function (tweet) {
     return (`
         <footer class="tweet-footer cf">
             <ul class="tweet-actions full-width">
-                ${getReplyItem()}
-                ${getRetweetItem(tweet)}
-                ${getFavoriteItem(tweet)}
+                ${this.getReplyItem()}
+                ${this.getRetweetItem(tweet)}
+                ${this.getFavoriteItem(tweet)}
             </ul>
         </footer>
     `);
 };
 
 // アイテム: ツイート
-const getTweetItem = (tweet) => {
-    const isFavorite = tweet.favorited ? 'is-favorite' : '';
-    const isRetweet = tweet.retweeted ? 'is-retweet' : '';
+component.getTweetItem = function (tweet) {
     const tweetItem = (`
-        <article class="stream-item is-actionable ${isFavorite} ${isRetweet}" data-tweet-id="${tweet.id_str}">
+        <article class="stream-item is-actionable" data-tweet-id="${tweet.id_str}">
             <div class="item-box">
                 <div class="tweet">
-                    ${getHeaderItem(tweet)}
-                    ${getBodyItem(tweet)}
-                    ${getFooterItem(tweet)}
+                    ${this.getHeaderItem(tweet)}
+                    ${this.getBodyItem(tweet)}
+                    ${this.getFooterItem(tweet)}
                 </div>
             </div>
         </article>
@@ -187,7 +190,7 @@ const getTweetItem = (tweet) => {
 };
 
 // アイテム: メディアモーダル
-const getMediaModal = (mediaUrl) => {
+component.getMediaModal = function (mediaUrl) {
     const video = `<video class="ext-media" src="${mediaUrl}" controls autoplay>`;
     const image = `<img class="ext-media" src="${mediaUrl}">`;
     const media = mediaUrl.includes('.mp4') ? video : image;
@@ -196,7 +199,7 @@ const getMediaModal = (mediaUrl) => {
 };
 
 // アイテム: 設定モーダル
-const getSettingModal = (columnId, timelineInfo) => {
+component.getSettingModal = function (columnId, timelineInfo) {
     const likedTweetsSetting = (`
         <div class="ext-setting-item">
             <span>Liked Tweets</span>
