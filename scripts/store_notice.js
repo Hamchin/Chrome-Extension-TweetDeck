@@ -9,8 +9,7 @@ const storeNotices = (column) => {
     // 自分のユーザーネーム
     const receiverName = $(column).find('.attribution').text().replace('@', '');
     // 通知アイテム
-    const items = $(column).find('.stream-item');
-    $(items).each((_, item) => {
+    $(column).find('.stream-item').each((_, item) => {
         // 送信済みの場合 -> スキップ
         if ($(item).hasClass('done')) return;
         // いいね以外の場合 -> スキップ

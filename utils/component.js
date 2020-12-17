@@ -123,7 +123,7 @@ component.getBodyItem = function (tweet, quoted = false) {
 // アイテム: リプライ
 component.getReplyItem = function () {
     return (`
-        <li class="tweet-reply-item pull-left margin-r--10 action">
+        <li class="tweet-reply-item pull-left margin-r--10 action is-protected-action">
             <a class="tweet-action position-rel">
                 <i class="icon icon-reply txt-center pull-left"></i>
             </a>
@@ -136,7 +136,7 @@ component.getRetweetItem = function (tweet) {
     const isRetweet = tweet.retweeted ? 'is-retweet' : '';
     const anim = tweet.retweeted ? 'anim anim-slower anim-bounce-in' : '';
     return (`
-        <li class="tweet-retweet-item pull-left margin-r--10 action ${isRetweet}">
+        <li class="tweet-retweet-item pull-left margin-r--10 action is-protected-action ${isRetweet}">
             <a class="tweet-action position-rel ${anim}">
                 <i class="icon icon-retweet icon-retweet-toggle txt-center pull-left"></i>
                 <span class="pull-right icon-retweet-toggle margin-l--3 margin-t--1 txt-size--12 retweet-count">${tweet.retweet_count}</span>
@@ -215,15 +215,6 @@ component.getSettingModal = function (columnId, timelineInfo) {
             <input type="number" id="minLikedCount" min="0" value="${timelineInfo.minLikedCount}">
         </div>
     `);
-    const sortSetting = (`
-        <div class="ext-setting-item">
-            <span>Sort By</span>
-            <select id="sortBy">
-                <option value="DEFAULT" ${timelineInfo.sortBy === 'DEFAULT' ? 'selected' : ''}>Default</option>
-                <option value="LIKED_COUNT" ${timelineInfo.sortBy === 'LIKED_COUNT' ? 'selected' : ''}>Liked Count</option>
-            </select>
-        </div>
-    `);
     const actionSetting = (`
         <div class="ext-setting-item">
             <span>Action when clicking on item</span>
@@ -239,7 +230,6 @@ component.getSettingModal = function (columnId, timelineInfo) {
                 <div>
                     ${likedTweetsSetting}
                     ${minLikedCountSetting}
-                    ${sortSetting}
                     ${actionSetting}
                 </div>
                 <button class="ext-setting-done Button--primary pull-right">Done</button>
