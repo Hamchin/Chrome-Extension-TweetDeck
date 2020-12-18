@@ -1,6 +1,17 @@
 // ツイッター
 const twitter = {};
 
+// 時間データ付きツイートを取得する
+twitter.getTweetWithTimeData = function (tweet) {
+    const timestamp = new Date(tweet.created_at).getTime();
+    const msec = Date.now() - timestamp;
+    const minutes = Math.floor(msec / 1000 / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const elapsed_time = { days, hours, minutes };
+    return { ...tweet, timestamp, elapsed_time };
+};
+
 // リストの一覧を取得する
 twitter.getLists = async function (userName) {
     const url = new URL(TWITTER_API_URL + '/lists/list');
@@ -37,6 +48,7 @@ twitter.getListTweets = async function (listId) {
     };
     const tweets = await fetch(url.toString(), request)
         .then(response => response.ok ? response.json() : [])
+        .then(tweets => tweets.map(tweet => this.getTweetWithTimeData(tweet)))
         .catch(_ => []);
     return tweets;
 };
@@ -56,6 +68,7 @@ twitter.getTweet = async function (tweetId) {
     };
     const tweet = await fetch(url.toString(), request)
         .then(response => response.ok ? response.json() : null)
+        .then(tweet => tweet ? this.getTweetWithTimeData(tweet) : null)
         .catch(_ => null);
     return tweet;
 };
@@ -75,6 +88,7 @@ twitter.likeTweet = async function (tweetId) {
     };
     const tweet = await fetch(url.toString(), request)
         .then(response => response.ok ? response.json() : null)
+        .then(tweet => tweet ? this.getTweetWithTimeData(tweet) : null)
         .catch(_ => null);
     return tweet;
 };

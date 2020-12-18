@@ -5,7 +5,7 @@ const component = {};
 component.getAccountItem = function (user) {
     const accountLink = `https://twitter.com/${user.screen_name}`;
     return (`
-        <a class="account-link link-complex block flex-auto action" href="${accountLink}" rel="user" target="_blank">
+        <a class="account-link link-complex block flex-auto" href="${accountLink}" rel="user" target="_blank">
             <div class="obj-left item-img tweet-img position-rel">
                 <img class="tweet-avatar avatar pin-top-full-width" src="${user.profile_image_url_https}">
             </div>
@@ -22,18 +22,14 @@ component.getAccountItem = function (user) {
 // アイテム: 経過時間
 component.getTimeItem = function (tweet) {
     const tweetLink = `https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`;
-    const timestamp = new Date(tweet.created_at).getTime();
-    const timeDiff = Date.now() - timestamp;
-    const minutesDiff = Math.floor(timeDiff / 1000 / 60);
-    const hoursDiff = Math.floor(minutesDiff / 60);
-    const daysDiff = Math.floor(hoursDiff / 24);
+    const { days, hours, minutes } = tweet.elapsed_time;
     const timeText = (
-        daysDiff > 0 ? daysDiff + 'd' :
-        hoursDiff > 0 ? hoursDiff + 'h' :
-        minutesDiff > 0 ? minutesDiff + 'm' : 'now'
+        days > 0 ? days + 'd' :
+        hours > 0 ? hours + 'h' :
+        minutes > 0 ? minutes + 'm' : 'now'
     );
     return (`
-        <time class="tweet-timestamp js-timestamp txt-mute flex-shrink--0 action" data-time="${timestamp}">
+        <time class="tweet-timestamp js-timestamp txt-mute flex-shrink--0" data-time="${tweet.timestamp}">
             <a class="txt-size-variable--12 no-wrap" href="${tweetLink}" rel="url" target="_blank">${timeText}</a>
         </time>
     `);
@@ -65,7 +61,7 @@ component.getMediaItem = function (media, quoted = false) {
     return (`
         <div class="media-preview position-rel">
             <div class="media-preview-container position-rel width-p--100 ${marginClass} is-paused">
-                <a class="block med-link media-item media-size-small is-zoomable action" rel="mediaPreview" data-media-url="${mediaUrl}" style="${mediaStyle}">
+                <a class="block med-link media-item media-size-small is-zoomable" rel="mediaPreview" data-media-url="${mediaUrl}" style="${mediaStyle}">
                     ${overlay}
                 </a>
             </div>
@@ -80,7 +76,7 @@ component.getMediaGridItem = function (mediaList, quoted = false) {
     const getMediaStyle = (mediaUrl) => `background-image: url(${mediaUrl}?format=jpg&name=120x120)`;
     const mediaImages = mediaUrls.map((mediaUrl) => (`
         <div class="media-image-container block position-rel">
-            <a class="media-image pin-all block action" rel="mediaPreview" data-media-url="${mediaUrl}" style="${getMediaStyle(mediaUrl)}"></a>
+            <a class="media-image pin-all block" rel="mediaPreview" data-media-url="${mediaUrl}" style="${getMediaStyle(mediaUrl)}"></a>
         </div>
     `));
     return (`
@@ -95,7 +91,7 @@ component.getMediaGridItem = function (mediaList, quoted = false) {
 // アイテム: 引用ツイート
 component.getQuotedItem = function (tweet) {
     return (`
-        <div class="quoted-tweet nbfc br--14 padding-al margin-b--8 position-rel margin-tm is-actionable action">
+        <div class="quoted-tweet nbfc br--14 padding-al margin-b--8 position-rel margin-tm">
             <header class="tweet-header">${this.getAccountItem(tweet.user)}</header>
             ${this.getBodyItem(tweet, quoted = true)}
         </div>
@@ -123,7 +119,7 @@ component.getBodyItem = function (tweet, quoted = false) {
 // アイテム: リプライ
 component.getReplyItem = function () {
     return (`
-        <li class="tweet-reply-item pull-left margin-r--10 action is-protected-action">
+        <li class="tweet-reply-item pull-left margin-r--10 is-protected-action">
             <a class="tweet-action position-rel">
                 <i class="icon icon-reply txt-center pull-left"></i>
             </a>
@@ -136,7 +132,7 @@ component.getRetweetItem = function (tweet) {
     const isRetweet = tweet.retweeted ? 'is-retweet' : '';
     const anim = tweet.retweeted ? 'anim anim-slower anim-bounce-in' : '';
     return (`
-        <li class="tweet-retweet-item pull-left margin-r--10 action is-protected-action ${isRetweet}">
+        <li class="tweet-retweet-item pull-left margin-r--10 is-protected-action ${isRetweet}">
             <a class="tweet-action position-rel ${anim}">
                 <i class="icon icon-retweet icon-retweet-toggle txt-center pull-left"></i>
                 <span class="pull-right icon-retweet-toggle margin-l--3 margin-t--1 txt-size--12 retweet-count">${tweet.retweet_count}</span>
@@ -151,7 +147,7 @@ component.getFavoriteItem = function (tweet) {
     const icon = tweet.favorited ? 'icon-heart-filled' : 'icon-favorite';
     const anim = tweet.favorited ? 'anim anim-slower anim-bounce-in' : '';
     return (`
-        <li class="tweet-favorite-item pull-left margin-r--10 action ${isFavorite}">
+        <li class="tweet-favorite-item pull-left margin-r--10 is-actionable ${isFavorite}">
             <a class="tweet-action position-rel ${anim}">
                 <i class="icon ${icon} icon-favorite-toggle txt-center pull-left"></i>
                 <span class="pull-right icon-favorite-toggle margin-l--2 margin-t--1 txt-size--12 like-count">${tweet.favorite_count}</span>
@@ -176,7 +172,7 @@ component.getFooterItem = function (tweet) {
 // アイテム: ツイート
 component.getTweetItem = function (tweet) {
     const tweetItem = (`
-        <article class="stream-item is-actionable" data-tweet-id="${tweet.id_str}">
+        <article class="stream-item" data-tweet-id="${tweet.id_str}">
             <div class="item-box">
                 <div class="tweet">
                     ${this.getHeaderItem(tweet)}
@@ -196,45 +192,4 @@ component.getMediaModal = function (mediaUrl) {
     const media = mediaUrl.includes('.mp4') ? video : image;
     const mediaModal = `<div class="ext-overlay ovl block">${media}</div>`;
     return mediaModal;
-};
-
-// アイテム: 設定モーダル
-component.getSettingModal = function (columnId, timelineInfo) {
-    const likedTweetsSetting = (`
-        <div class="ext-setting-item">
-            <span>Liked Tweets</span>
-            <select id="includeLikedTweets">
-                <option value="true" ${timelineInfo.includeLikedTweets ? 'selected' : ''}>include</option>
-                <option value="false" ${timelineInfo.includeLikedTweets ? '' : 'selected'}>exclude</option>
-            </select>
-        </div>
-    `);
-    const minLikedCountSetting = (`
-        <div class="ext-setting-item">
-            <span>Minimum Liked Count</span>
-            <input type="number" id="minLikedCount" min="0" value="${timelineInfo.minLikedCount}">
-        </div>
-    `);
-    const actionSetting = (`
-        <div class="ext-setting-item">
-            <span>Action when clicking on item</span>
-            <select id="clickAction">
-                <option value="NONE" ${timelineInfo.clickAction === 'NONE' ? 'selected' : ''}>None</option>
-                <option value="LIKE" ${timelineInfo.clickAction === 'LIKE' ? 'selected' : ''}>Like</option>
-            </select>
-        </div>
-    `);
-    const settingModal = (`
-        <div class="ext-overlay ovl block">
-            <div class="ext-setting-modal" data-column="${columnId}">
-                <div>
-                    ${likedTweetsSetting}
-                    ${minLikedCountSetting}
-                    ${actionSetting}
-                </div>
-                <button class="ext-setting-done Button--primary pull-right">Done</button>
-            </div>
-        </div>
-    `);
-    return settingModal.replace(/\n\s+/g, '');
 };

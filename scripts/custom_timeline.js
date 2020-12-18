@@ -1,67 +1,55 @@
-// カスタムタイムラインの初期状態
-const initialCustomTimelineState = {
-    clearedTweetIds: [],
-    includeLikedTweets: true,
-    minLikedCount: 0,
-    clickAction: 'NONE'
-};
-
-// カスタムタイムラインの情報
-let customTimelineInfo = {};
+// クリア済みツイートの連想配列
+const clearedTweetsMap = {};
 
 // タイムラインをカスタマイズする
 const customizeTimeline = async (column) => {
     $(column).addClass('load');
+    // リストのタイムラインを取得する
     const columnId = $(column).data('column');
     const listId = $(column).data('list-id');
     const container = $(column).find('.chirp-container');
-    const timelineInfo = customTimelineInfo[columnId];
     const tweets = await twitter.getListTweets(listId);
+    // 条件を満たさない場合 -> キャンセル
     if ($(column).hasClass('load') === false) return;
     if ($(container).scrollTop() > 0) return;
     $(column).removeClass('load');
     $(container).empty();
+    // ユーザーツイートの連想配列を構築する
+    const userTweetsMap = {};
     tweets.forEach((tweet) => {
-        // いいね済みの場合 -> キャンセル
-        if (tweet.favorited && timelineInfo.includeLikedTweets === false) return;
-        // いいね数が境界値未満の場合 -> キャンセル
-        if (tweet.favorite_count < timelineInfo.minLikedCount) return;
-        // 既読済みの場合 -> キャンセル
-        if (timelineInfo.clearedTweetIds.includes(tweet.id_str)) return;
-        // ツイートアイテムを追加する
+        // スコアを計算する
+        const divider = tweet.elapsed_time.days + 1;
+        tweet.score = Math.floor(tweet.favorite_count / divider);
+        // ユーザーのツイートリストに追加する
+        const userId = tweet.user.id_str;
+        userTweetsMap[userId] = (userTweetsMap[userId] || []).concat(tweet);
+    });
+    // ツイートリストをカスタマイズする
+    const customTweets = [];
+    for (let userId in userTweetsMap) {
+        const tweets = userTweetsMap[userId];
+        tweets.sort((a, b) => b.favorite_count - a.favorite_count);
+        customTweets.push(...tweets.slice(0, 3));
+    }
+    customTweets.sort((a, b) => b.timestamp - a.timestamp);
+    // ツイートリストをタイムラインに反映する
+    customTweets.forEach((tweet) => {
+        if (tweet.favorited) return;
+        if (clearedTweetsMap[columnId].includes(tweet.id_str)) return;
         const tweetItem = component.getTweetItem(tweet);
         $(container).append(tweetItem);
     });
 };
 
-// ツイートにいいねを付ける
-const likeTweet = async (tweetItem) => {
-    $(tweetItem).closest('.column').removeClass('load');
-    // いいね完了後のツイートを取得する
+// クリックイベント: いいねアイテム -> ツイートにいいねを付ける
+$(document).on('click', '.ext-column .tweet-favorite-item', async (e) => {
+    $(e.currentTarget).closest('.column').removeClass('load');
+    const tweetItem = $(e.currentTarget).closest('.stream-item');
     const tweetId = $(tweetItem).data('tweet-id');
     const tweet = await twitter.likeTweet(tweetId) || await twitter.getTweet(tweetId);
-    // フッターを更新する
     const footer = component.getFooterItem(tweet);
     $(tweetItem).find('footer').replaceWith(footer);
-};
-
-// クリックイベント: ツイートアイテム
-$(document).on('click', '.ext-column .stream-item', (e) => {
-    const column = $(e.currentTarget).closest('.column');
-    const columnId = $(column).data('column');
-    const timelineInfo = customTimelineInfo[columnId];
-    // ツイートにいいねを付ける
-    if (timelineInfo.clickAction === 'LIKE') likeTweet(e.currentTarget);
 });
-
-// クリックイベント: いいねアイテム -> ツイートにいいねを付ける
-$(document).on('click', '.ext-column .tweet-favorite-item', (e) => {
-    const tweetItem = $(e.currentTarget).closest('.stream-item');
-    likeTweet(tweetItem);
-});
-
-// クリックイベント: アクションアイテム -> 親要素への伝播を抑止する
-$(document).on('click', '.ext-column .action', (e) => e.stopPropagation());
 
 // クリックイベント: メディアプレビュー -> メディアモーダルを表示する
 $(document).on('click', '.ext-column [rel="mediaPreview"]', (e) => {
@@ -70,47 +58,19 @@ $(document).on('click', '.ext-column [rel="mediaPreview"]', (e) => {
     $('body').append(mediaModal);
 });
 
-// マウスダウンイベント: 設定ボタン -> 設定モーダルを表示する
-$(document).on('mousedown', '.ext-column .column-settings-link', (e) => {
-    const column = $(e.currentTarget).closest('.column');
-    const columnId = $(column).data('column');
-    const timelineInfo = customTimelineInfo[columnId];
-    const settingModal = component.getSettingModal(columnId, timelineInfo);
-    $('body').append(settingModal);
-});
-
-// クリックイベント: 設定完了ボタン
-$(document).on('click', '.ext-setting-done', (e) => {
-    // 設定を更新する
-    const modal = $(e.currentTarget).closest('.ext-setting-modal');
-    const columnId = $(modal).data('column');
-    const timelineInfo = customTimelineInfo[columnId];
-    timelineInfo.clearedTweetIds = [];
-    timelineInfo.includeLikedTweets = JSON.parse($(modal).find('#includeLikedTweets').val());
-    timelineInfo.minLikedCount = Number($(modal).find('#minLikedCount').val());
-    timelineInfo.clickAction = $(modal).find('#clickAction').val();
-    customTimelineInfo[columnId] = timelineInfo;
-    // タイムラインを更新する
-    const column = $(`.ext-column[data-column="${columnId}"]`);
-    $(column).find('.chirp-container').empty();
-    customizeTimeline(column);
-    $('.ext-overlay').remove();
-});
-
 // クリックイベント: オーバーレイ -> モーダルを閉じる
-$(document).on('click', '.ext-overlay', (e) => $(e.currentTarget).remove());
-
-// クリックイベント: 設定モーダル -> 親要素への伝播を抑止する
-$(document).on('click', '.ext-setting-modal', (e) => e.stopPropagation());
+$(document).on('click', '.ext-overlay', (e) => {
+    if (e.target !== e.currentTarget) return;
+    $(e.currentTarget).remove();
+});
 
 // クリックイベント: カラムアイコン -> ツイートをクリアする
 $(document).on('click', '.ext-column .column-type-icon', (e) => {
     const column = $(e.currentTarget).closest('.column');
     const columnId = $(column).data('column');
     // クリア済みツイートを更新する
-    const timelineInfo = customTimelineInfo[columnId];
     const tweetIds = $(column).find('.stream-item').map((_, item) => item.dataset.tweetId).get();
-    timelineInfo.clearedTweetIds = timelineInfo.clearedTweetIds.concat(tweetIds).slice(-200);
+    clearedTweetsMap[columnId] = clearedTweetsMap[columnId].concat(tweetIds).slice(-200);
     // タイムラインのコンテナを空にする
     $(column).find('.chirp-container').empty();
     $(column).removeClass('load');
@@ -132,9 +92,9 @@ $(document).on('click', '.customize-btn', async (e) => {
     const listData = lists.find(listData => listData.name === listName);
     const listId = listData ? listData.id_str : '';
     $(column).data('list-id', listId);
-    // タイムラインのデータを初期化する
+    // クリア済みツイートを初期化する
     const columnId = $(column).data('column');
-    customTimelineInfo[columnId] = { ...initialCustomTimelineState };
+    clearedTweetsMap[columnId] = [];
     // 定期的にタイムラインをカスタマイズする
     customizeTimeline(column);
     setInterval(() => customizeTimeline(column), 1000 * 60);
