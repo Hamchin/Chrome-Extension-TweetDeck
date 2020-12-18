@@ -28,7 +28,7 @@ const customizeTimeline = async (column) => {
     const customTweets = [];
     for (let userId in userTweetsMap) {
         const tweets = userTweetsMap[userId];
-        tweets.sort((a, b) => b.favorite_count - a.favorite_count);
+        tweets.sort((a, b) => b.score - a.score);
         customTweets.push(...tweets.slice(0, 3));
     }
     customTweets.sort((a, b) => b.timestamp - a.timestamp);
