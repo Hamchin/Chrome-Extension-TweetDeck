@@ -75,7 +75,7 @@ component.getMediaGridItem = function (mediaList, quoted = false) {
     const marginClass = quoted ? 'margin-tm' : 'margin-vm';
     const getMediaStyle = (mediaUrl) => `background-image: url(${mediaUrl}?format=jpg&name=120x120)`;
     const mediaImages = mediaUrls.map((mediaUrl) => (`
-        <div class="media-image-container block position-rel">
+        <div class="media-image-container block position-rel is-actionable">
             <a class="media-image pin-all block" rel="mediaPreview" data-media-url="${mediaUrl}" style="${getMediaStyle(mediaUrl)}"></a>
         </div>
     `));
