@@ -17,32 +17,3 @@
     max-width: 80vw;
     border-radius: 8px;
 }
-
-.ext-setting-modal {
-    display: inline-block;
-    vertical-align: middle;
-    width: 400px;
-    padding: 20px 20px 15px 20px;
-    border-radius: 14px;
-    background: #FFFFFF;
-}
-
-.ext-setting-item {
-    display: flex;
-    text-align: left;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.ext-setting-item:last-child {
-    margin-bottom: 15px;
-}
-
-.ext-setting-item span {
-    flex-basis: 60%;
-    font-size: 14px;
-}
-
-.ext-setting-item select, .ext-setting-item input {
-    flex-basis: 40%;
-}
