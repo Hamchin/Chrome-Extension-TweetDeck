@@ -13,22 +13,22 @@ const storeNotices = (column) => {
         // 送信済みの場合 -> スキップ
         if ($(item).hasClass('done')) return;
         // いいね以外の場合 -> スキップ
-        const heart = $(item).find('.activity-header').find('.icon-heart-filled');
+        const heart = $(item).find('.activity-header .icon-heart-filled');
         if ($(heart).length === 0) return;
         // リプライの場合 -> スキップ
-        const reply = $(item).find('.tweet-body').find('.other-replies');
+        const reply = $(item).find('.tweet-body > .nbfc > .other-replies');
         if ($(reply).length > 0) return;
         // 自分以外のツイートの場合 -> スキップ
-        const username = $(item).find('.account-link').find('.username').first().text();
+        const username = $(item).find('.account-link .username').first().text();
         if (username !== '@' + receiverName) return;
         // 相手のユーザーネーム
-        const userLink = $(item).find('.activity-header').find('.account-link').attr('href');
+        const userLink = $(item).find('.activity-header .account-link').attr('href');
         const senderName = getLastPath(userLink);
         // ツイートID
-        const tweetLink = $(item).find('.tweet-header').find('.tweet-timestamp').find('a').attr('href');
+        const tweetLink = $(item).find('.tweet-header .tweet-timestamp a').attr('href');
         const tweetId = getLastPath(tweetLink);
         // タイムスタンプ
-        const dataTime = $(item).find('.activity-header').find('.tweet-timestamp').data('time');
+        const dataTime = $(item).find('.activity-header .tweet-timestamp').data('time');
         const timestamp = Math.floor(dataTime / 1000);
         // 通知を送信する
         const body = {
