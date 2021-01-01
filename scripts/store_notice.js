@@ -4,21 +4,21 @@ const getLastPath = (link) => {
     return paths[paths.length - 1];
 };
 
-// 通知を送信する
+// 通知を保存する
 const storeNotices = (column) => {
     // 自分のユーザーネーム
     const receiverName = $(column).find('.attribution').text().replace('@', '');
     // 通知アイテム
     $(column).find('.stream-item').each((_, item) => {
-        // 送信済みの場合 -> スキップ
-        if ($(item).hasClass('done')) return;
-        // いいね以外の場合 -> スキップ
+        // 保存済みの場合 -> キャンセル
+        if ($(item).attr('stored') !== undefined) return;
+        // いいね以外の場合 -> キャンセル
         const heart = $(item).find('.activity-header .icon-heart-filled');
         if ($(heart).length === 0) return;
-        // リプライの場合 -> スキップ
+        // リプライの場合 -> キャンセル
         const reply = $(item).find('.tweet-body > .nbfc > .other-replies');
         if ($(reply).length > 0) return;
-        // 自分以外のツイートの場合 -> スキップ
+        // 自分以外のツイートの場合 -> キャンセル
         const username = $(item).find('.account-link .username').first().text();
         if (username !== '@' + receiverName) return;
         // 相手のユーザーネーム
@@ -30,7 +30,7 @@ const storeNotices = (column) => {
         // タイムスタンプ
         const dataTime = $(item).find('.activity-header .tweet-timestamp').data('time');
         const timestamp = Math.floor(dataTime / 1000);
-        // 通知を送信する
+        // 通知を保存する
         const body = {
             receiver_name: receiverName,
             sender_name: senderName,
@@ -42,25 +42,25 @@ const storeNotices = (column) => {
             body: JSON.stringify(body)
         };
         fetch(TWITTER_NOTICE_API_URL + '/notice/update', request)
-            .then(response => response.ok ? $(item).addClass('done') : null);
+            .then(response => response.ok ? $(item).attr('stored', '') : null);
     });
 };
 
-// クリックイベント: 通知送信ボタン -> 通知を送信する
+// クリックイベント: 通知保存ボタン -> 通知を保存する
 $(document).on('click', '.store-notice-btn', (e) => {
-    // 通知を送信する
+    // 通知を保存する
     const column = $(e.currentTarget).closest('.column');
     storeNotices(column);
     // 設定ボタンをクリックする
     const settingLink = $(column).find('.column-settings-link');
     $(settingLink).get(0).click();
-    // 定期的に通知を送信する
+    // 定期的に通知を保存する
     if ($(column).hasClass('store-notice-enabled')) return;
     $(column).addClass('store-notice-enabled');
     setInterval(() => storeNotices(column), 1000 * 60);
 });
 
-// マウスアップイベント: 設定ボタン -> 通知送信ボタンを設置する
+// マウスアップイベント: 設定ボタン -> 通知保存ボタンを設置する
 $(document).on('mouseup', '.column-settings-link', async (e) => {
     const column = $(e.currentTarget).closest('.column');
     const icon = $(column).find('.column-type-icon');

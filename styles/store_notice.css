@@ -2,7 +2,7 @@
     color: #1DA1F2 !important;
 }
 
-.store-notice-enabled .done .activity-header .icon-heart-filled {
+.stream-item[stored] .activity-header .icon-heart-filled {
     color: #9DCCE0 !important;
 }
 
