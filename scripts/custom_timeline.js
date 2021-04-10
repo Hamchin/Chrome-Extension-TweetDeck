@@ -97,7 +97,7 @@ $(document).on('click', '.customize-btn', async (e) => {
     clearedTweetsMap[columnId] = [];
     // 定期的にタイムラインをカスタマイズする
     customizeTimeline(column);
-    setInterval(() => customizeTimeline(column), 1000 * 60);
+    setInterval(() => customizeTimeline(column), CUSTOM_TIMELINE_INTERVAL);
 });
 
 // マウスアップイベント: 設定ボタン -> カスタマイズボタンを設置する
