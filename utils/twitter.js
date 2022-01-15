@@ -13,12 +13,11 @@ twitter.getTweetWithTimeData = function (tweet) {
 };
 
 // リストの一覧を取得する
-twitter.getLists = async function (userName) {
+twitter.getLists = async function (screenName) {
     const url = new URL(TWITTER_API_URL + '/lists/list');
     const body = {
-        access_token: TWITTER_ACCESS_TOKEN,
-        access_secret: TWITTER_ACCESS_SECRET,
-        screen_name: userName
+        ...TWITTER_CREDENTIALS[screenName],
+        screen_name: screenName
     };
     const request = {
         method: 'POST',
@@ -31,11 +30,10 @@ twitter.getLists = async function (userName) {
 };
 
 // リストのタイムラインを取得する
-twitter.getListTweets = async function (listId) {
+twitter.getListTweets = async function (screenName, listId) {
     const url = new URL(TWITTER_API_URL + '/lists/statuses');
     const body = {
-        access_token: TWITTER_ACCESS_TOKEN,
-        access_secret: TWITTER_ACCESS_SECRET,
+        ...TWITTER_CREDENTIALS[screenName],
         list_id: listId,
         exclude_replies: true,
         exclude_retweets: true,
@@ -54,11 +52,10 @@ twitter.getListTweets = async function (listId) {
 };
 
 // ツイートを個別に取得する
-twitter.getTweet = async function (tweetId) {
+twitter.getTweet = async function (screenName, tweetId) {
     const url = new URL(TWITTER_API_URL + '/statuses/show');
     const body = {
-        access_token: TWITTER_ACCESS_TOKEN,
-        access_secret: TWITTER_ACCESS_SECRET,
+        ...TWITTER_CREDENTIALS[screenName],
         tweet_id: tweetId,
         trim_user: false
     };
@@ -74,11 +71,10 @@ twitter.getTweet = async function (tweetId) {
 };
 
 // ツイートにいいねを付ける
-twitter.likeTweet = async function (tweetId) {
+twitter.likeTweet = async function (screenName, tweetId) {
     const url = new URL(TWITTER_API_URL + '/favorites/create');
     const body = {
-        access_token: TWITTER_ACCESS_TOKEN,
-        access_secret: TWITTER_ACCESS_SECRET,
+        ...TWITTER_CREDENTIALS[screenName],
         tweet_id: tweetId,
         trim_user: false
     };

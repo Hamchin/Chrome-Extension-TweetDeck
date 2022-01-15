@@ -19,8 +19,8 @@ const storeNotices = (column) => {
         const reply = $(item).find('.tweet-body > .nbfc > .other-replies');
         if ($(reply).length > 0) return;
         // 自分以外のツイートの場合 -> キャンセル
-        const username = $(item).find('.account-link .username').first().text();
-        if (username !== '@' + receiverName) return;
+        const screenName = $(item).find('.account-link .username').first().text();
+        if (screenName !== '@' + receiverName) return;
         // 相手のユーザーネーム
         const userLink = $(item).find('.activity-header .account-link').attr('href');
         const senderName = getLastPath(userLink);

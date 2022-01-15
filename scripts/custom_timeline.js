@@ -4,11 +4,12 @@ const clearedTweetsMap = {};
 // タイムラインをカスタマイズする
 const customizeTimeline = async (column) => {
     $(column).addClass('load');
-    // リストのタイムラインを取得する
     const columnId = $(column).data('column');
-    const listId = $(column).data('list-id');
     const container = $(column).find('.chirp-container');
-    const tweets = await twitter.getListTweets(listId);
+    // リストのタイムラインを取得する
+    const screenName = $(column).find('.attribution').text().replace('@', '');
+    const listId = $(column).data('list-id');
+    const tweets = await twitter.getListTweets(screenName, listId);
     // 条件を満たさない場合 -> キャンセル
     if ($(column).hasClass('load') === false) return;
     if ($(container).scrollTop() > 0) return;
@@ -43,10 +44,12 @@ const customizeTimeline = async (column) => {
 
 // クリックイベント: いいねアイテム -> ツイートにいいねを付ける
 $(document).on('click', '.ext-column .tweet-favorite-item', async (e) => {
-    $(e.currentTarget).closest('.column').removeClass('load');
+    const column = $(e.currentTarget).closest('.column');
+    $(column).removeClass('load');
+    const screenName = $(column).find('.attribution').text().replace('@', '');
     const tweetItem = $(e.currentTarget).closest('.stream-item');
     const tweetId = $(tweetItem).data('tweet-id');
-    const tweet = await twitter.likeTweet(tweetId) || await twitter.getTweet(tweetId);
+    const tweet = await twitter.likeTweet(screenName, tweetId) || await twitter.getTweet(screenName, tweetId);
     const footer = component.getFooterItem(tweet);
     $(tweetItem).find('footer').replaceWith(footer);
 });
@@ -87,8 +90,8 @@ $(document).on('click', '.customize-btn', async (e) => {
     $(content).append(container);
     // 対象リストのデータを取得する
     const listName = $(column).find('.column-heading').text();
-    const userName = $(column).find('.attribution').text().replace('@', '');
-    const lists = await twitter.getLists(userName);
+    const screenName = $(column).find('.attribution').text().replace('@', '');
+    const lists = await twitter.getLists(screenName);
     const listData = lists.find(listData => listData.name === listName);
     const listId = listData ? listData.id_str : '';
     $(column).data('list-id', listId);
